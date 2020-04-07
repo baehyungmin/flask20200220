@@ -31,6 +31,9 @@ stores = [
 @app.route('/store', methods = ['POST']) 
 def create_store():
     requested_data = request.get_json()
+    for store in stores:
+        if store['name'] == requested_data['name']:
+            return jsonify({'Message':'Store already exists'})
     new_store = {'name':requested_data['name'], 'item':[]}
     stores.append(new_store)
     return jsonify(new_store)
@@ -58,7 +61,10 @@ def get_stores():
 def create_item_in_store(name):
     for store in stores:
         if store['name'] == name:
-            requested_data = request.get_json()
+            for i in store['item']:
+                requested_data = request.get_json()
+                if i['name'] == requested_data['name']:
+                    return jsonify({'Message':'Item already in list'})
             new_item = {'name':requested_data['name'], 'price':requested_data['price']}
             store['item'].append(new_item)
             return jsonify({'items':store['item']})
